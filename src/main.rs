@@ -1,15 +1,20 @@
 extern crate git2;
 extern crate notify;
+extern crate sparkler;
 
 use notify::{watcher, RecursiveMode, Watcher};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-fn main() { 
+use sparkler::repo;
+
+fn main() {
     // Create a channel to receive the events.
     let (tx, rx) = channel();
 
     let path = "../tmp";
+
+    let the_repo = repo::Repo::new(path);
 
     // Create a watcher object, delivering debounced events.
     // The notification back-end is selected based on the platform.
@@ -24,8 +29,9 @@ fn main() {
     loop {
         match rx.recv() {
             Ok(event) => {
-                println!("{:?}", event);
-            },
+                println!("event: {:?}", event);
+                let _ = the_repo.get_status();
+            }
             Err(e) => println!("watch error: {:?}", e),
         }
     }
