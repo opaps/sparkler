@@ -37,9 +37,8 @@ fn main() {
                         if !path.iter().any(|p| p.to_str().unwrap() == ".git") {
                             let _ = the_repo.get_status();
                         }
-                    },
+                    }
                     _ => {}
-
                 }
             }
             Err(e) => println!("watch error: {:?}", e),
