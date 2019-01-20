@@ -29,8 +29,18 @@ fn main() {
     loop {
         match rx.recv() {
             Ok(event) => {
-                println!("event: {:?}", event);
-                let _ = the_repo.get_status();
+                use notify::DebouncedEvent::*;
+                match event {
+                    Create(path) | Write(path) | Chmod(path) | Remove(path) | Rename(_, path) => {
+                        println!("event: {:?}", path);
+                        // exclude .git
+                        if !path.iter().any(|p| p.to_str().unwrap() == ".git") {
+                            let _ = the_repo.get_status();
+                        }
+                    },
+                    _ => {}
+
+                }
             }
             Err(e) => println!("watch error: {:?}", e),
         }
